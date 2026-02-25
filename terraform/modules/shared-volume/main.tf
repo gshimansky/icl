@@ -58,7 +58,6 @@ data "kubernetes_resource" "shared-volume" {
 
   metadata {
     name = kubernetes_persistent_volume_claim.shared-volume.spec.0.volume_name
-    namespace = kubernetes_namespace.shared-volume.id
   }
 }
 

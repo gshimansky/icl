@@ -2,9 +2,15 @@ resource "helm_release" "docker-registry" {
   name = "docker-registry"
   namespace = "docker-registry"
   create_namespace = true
-  repository = "https://helm.twun.io"
+  repository = "https://twuni.github.io/docker-registry.helm"
   chart = "docker-registry"
   version = var.release
+
+  # Increase timeout and enable waiting for deployment
+  timeout = 600
+  wait = true
+  wait_for_jobs = true
+
   values = [
     <<-EOT
       # https://github.com/twuni/docker-registry.helm
@@ -21,6 +27,9 @@ resource "helm_release" "docker-registry" {
           - "registry.${var.ingress_domain}"
         annotations:
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      # Use Recreate strategy to avoid multi-attach issues with RWO volumes
+      updateStrategy:
+        type: Recreate
     EOT
   ]
 }
